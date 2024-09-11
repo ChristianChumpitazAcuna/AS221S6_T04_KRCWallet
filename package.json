@@ -1,0 +1,31 @@
+{
+  "name": "certificate-registry",
+  "version": "1.0.0",
+  "description": "Registro de certificados en blockchain usando Solidity y MetaMask en la red Holesky",
+  "main": "scripts/deploy.js",
+  "scripts": {
+    "test": "mocha --exit tests/*.js",
+    "deploy": "node scripts/deploy.js",
+    "lint": "solhint 'contracts/**/*.sol'"
+  },
+  "dependencies": {
+    "ethers": "^6.0.0",
+    "dotenv": "^16.0.0"
+  },
+  "devDependencies": {
+    "chai": "^4.3.4",
+    "mocha": "^10.2.0",
+    "solhint": "^3.3.7",
+    "hardhat": "^2.14.0"
+  },
+  "keywords": [
+    "solidity",
+    "blockchain",
+    "certificates",
+    "ethers",
+    "MetaMask",
+    "Holesky"
+  ],
+  "author": "Hebert",
+  "license": "MIT"
+}
