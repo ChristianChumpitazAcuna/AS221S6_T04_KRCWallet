@@ -6,7 +6,7 @@ export const useContract = () => {
     const [contract, setContract] = useState<ContractService | null>(null);
     const [account, setAccount] = useState<string | null>(null);
     const [accounts, setAccounts] = useState<string[]>([]);
-    const [web3Service, setWeb3Service] = useState<Web3Service | null>(null);
+    const [, setWeb3Service] = useState<Web3Service | null>(null);
 
     useEffect(() => {
         initContract();

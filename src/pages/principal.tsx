@@ -23,7 +23,7 @@ export default function Principal() {
 	return (
 		<section
 			className="w-full h-screen flex flex-row items-center justify-center gap-x-4 
-			bg-gray-300 dark:bg-gray-950"
+			bg-neutral-200 dark:bg-neutral-900"
 		>
 			<ThemeToggle />
 			<TokenInfo account={account!} balance={balance} />
