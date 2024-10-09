@@ -23,7 +23,7 @@ export default function SelectAccount({
 	return (
 		<Card>
 			<Select onValueChange={onAccountChange} value={selectedAccount || ""}>
-				<SelectTrigger className="w-[280px] border-none">
+				<SelectTrigger className="w-[15rem] border-none">
 					<Wallet className="mr-2 h-4 w-4" />
 					<SelectValue placeholder="Selecciona una Cuenta" />
 				</SelectTrigger>

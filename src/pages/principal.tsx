@@ -1,5 +1,5 @@
-import ThemeToggle from "@/components/themeToggle";
-import SelectAccount from "@/components/user/selectAccount";
+import MenuBar from "@/components/shared/menuBar";
+import NavBar from "@/components/shared/navBar";
 import TransferToken from "@/components/user/transferTokens";
 import TokenInfo from "@/components/user/userInfo";
 import { useContract } from "@/hooks/useContract";
@@ -21,23 +21,23 @@ export default function Principal() {
 	};
 
 	return (
-		<section
-			className="w-full h-screen flex flex-row items-center justify-center gap-x-4 
-			bg-neutral-200 dark:bg-neutral-900"
-		>
-			<ThemeToggle />
-			<TokenInfo account={account!} balance={balance} />
-			<TransferToken
-				account={account!}
-				contract={contract}
-				onTransfer={fetchBalance}
-			/>
-
-			<SelectAccount
+		<section className="w-full h-screen flex flex-col gap-y-4 bg-neutral-100 dark:bg-neutral-900">
+			<NavBar
 				accounts={accounts}
 				selectedAccount={account}
 				onAccountChange={handleAccountChange}
 			/>
+			<section className="h-full flex flex-row gap-x-6 items-center justify-center">
+				<TokenInfo account={account!} balance={balance} />
+				<TransferToken
+					account={account!}
+					contract={contract}
+					onTransfer={fetchBalance}
+				/>
+			</section>
+			<section>
+				<MenuBar />
+			</section>
 		</section>
 	);
 }
