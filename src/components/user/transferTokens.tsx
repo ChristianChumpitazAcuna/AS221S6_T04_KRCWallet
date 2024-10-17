@@ -1,11 +1,5 @@
 import { useState } from "react";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "../ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Toaster } from "../ui/sonner";
@@ -47,8 +41,8 @@ export default function TransferToken({
 			<CardHeader>
 				<CardTitle className="uppercase text-center">Transfer Tokens</CardTitle>
 			</CardHeader>
-			<CardContent className="flex flex-col gap-y-10">
-				<CardDescription>
+			<CardContent className="space-y-6">
+				<div className="bg-neutral-950/5 dark:bg-white/5 rounded-2xl">
 					<div className="flex items-center space-x-4 p-4">
 						<User className="h-6 w-6" />
 						<div className="flex-1 space-y-1">
@@ -56,18 +50,21 @@ export default function TransferToken({
 							<p className="text-sm text-muted-foreground">{account}</p>
 						</div>
 					</div>
-				</CardDescription>
-				<CardDescription>
-					<label>Cuenta Destino</label>
+				</div>
+				<div className="space-y-2">
+					<label className="text-sm text-muted-foreground">
+						Cuenta Destino
+					</label>
 					<Input
 						value={receiver}
 						onChange={(e) => setReceiver(e.target.value)}
 					/>
-				</CardDescription>
-				<CardDescription>
-					<label>Monto</label>
+				</div>
+				<div className="space-y-2">
+					<label className="text-sm text-muted-foreground">Monto</label>
 					<Input value={amount} onChange={(e) => setAmount(e.target.value)} />
-				</CardDescription>
+				</div>
+
 				<Button
 					onClick={transferToken}
 					type="submit"
@@ -77,14 +74,14 @@ export default function TransferToken({
 					{loading ? (
 						<div className="flex items-center justify-center gap-2">
 							<LoaderCircle className="w-4 h-4 animate-spin" />
-							<span>Transferiendo...</span>
+							<span>Transfiriendo...</span>
 						</div>
 					) : (
 						<span>Transferir</span>
 					)}
 				</Button>
 			</CardContent>
-			<Toaster />
+			<Toaster position="top-right" />
 		</Card>
 	);
 }

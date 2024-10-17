@@ -1,97 +1,139 @@
-import Web3 from "web3";
-import contractABI from "../ABI/contractABI.json";
-import BigNumber from "bignumber.js";
+import { holesky } from "viem/chains";
+import { contractABI } from "../ABI/contractABI";
+import {
+	Address,
+	createPublicClient,
+	createWalletClient,
+	custom,
+	http,
+} from "viem";
 
-const CONTRACT_ADDRESS = "0x3161801Cb3A21361c10930D106793CC80ae8144F";
+const CONTRACT_ADDRESS = import.meta.env.VITE_CONTRACT_ADDRESS as Address;
 
-interface MyContract {
-	methods: {
-		name(): {
-			call(): Promise<string>;
-		};
-		symbol(): {
-			call(): Promise<string>;
-		};
-		decimals(): {
-			call(): Promise<string>;
-		};
-		totalSupply(): {
-			call(): Promise<string>;
-		};
-		balanceOf(account: string): {
-			call(): Promise<string>;
-		};
-		transfer(
-			to: string,
-			amount: string
-		): {
-			send(options: { from: string }): Promise<any>;
-		};
-	};
-	events: {};
-}
+const client = createPublicClient({
+	chain: holesky,
+	transport: http(),
+});
+const walletClient = createWalletClient({
+	chain: holesky,
+	transport: custom(window.ethereum),
+});
 
 export default class ContractService {
-	private contract: MyContract;
-
-	constructor(web3: Web3) {
-		this.contract = new web3.eth.Contract(
-			contractABI as any,
-			CONTRACT_ADDRESS
-		) as unknown as MyContract;
-	}
-
-	async getTotalSupply(): Promise<string> {
-		return await this.contract.methods.totalSupply().call();
-	}
-
-	async getBalanceOf(account: string): Promise<string> {
+	async getName(): Promise<string> {
 		try {
-			const balance = await this.contract.methods.balanceOf(account).call();
+			const name = await client.readContract({
+				address: CONTRACT_ADDRESS,
+				abi: contractABI,
+				functionName: "name",
+			});
+
+			return name;
+		} catch (e) {
+			console.error("Error al obtener el nombre del contrato: ", e);
+			throw e;
+		}
+	}
+
+	async getSymbol(): Promise<string> {
+		try {
+			const symbol = client.readContract({
+				address: CONTRACT_ADDRESS,
+				abi: contractABI,
+				functionName: "symbol",
+			});
+
+			return symbol;
+		} catch (e) {
+			console.error("Error al obtener el simbolo del contrato: ", e);
+			throw e;
+		}
+	}
+
+	async getDecimals(): Promise<number> {
+		try {
+			const decimals = client.readContract({
+				address: CONTRACT_ADDRESS,
+				abi: contractABI,
+				functionName: "decimals",
+			});
+
+			return decimals;
+		} catch (e) {
+			console.error("Error al obtener los decimales del contrato: ", e);
+			throw e;
+		}
+	}
+
+	async getTotalSupply(): Promise<bigint> {
+		try {
+			const totalSupply = client.readContract({
+				address: CONTRACT_ADDRESS,
+				abi: contractABI,
+				functionName: "totalSupply",
+			});
+
+			return totalSupply;
+		} catch (e) {
+			console.error("Error al obtener el total de tokens: ", e);
+			throw e;
+		}
+	}
+
+	async getBalanceOf(account: Address): Promise<string> {
+		try {
+			const balance = await client.readContract({
+				address: CONTRACT_ADDRESS,
+				abi: contractABI,
+				functionName: "balanceOf",
+				args: [account],
+			});
+
 			const simbol = await this.getSymbol();
 			const decimals = await this.getDecimals();
 			const amount = this.formatAmount(balance, decimals);
+
 			return `${amount} ${simbol}`;
 		} catch (e) {
-			console.error("Error: ", e);
+			console.error("Error al obtener el balance: ", e);
 			throw e;
 		}
 	}
 
-	async transfer(to: string, amount: string, from: string): Promise<any> {
+	async transfer(recipient: Address, amount: string): Promise<void> {
 		try {
 			const decimals = await this.getDecimals();
-			const rawAmount = new BigNumber(amount)
-				.multipliedBy(new BigNumber(10).pow(decimals))
-				.integerValue(BigNumber.ROUND_FLOOR)
-				.toString();
+			const amountFormat = BigInt(
+				Math.floor(parseFloat(amount) * 10 ** decimals)
+			);
 
-			const transfer = await this.contract.methods
-				.transfer(to, rawAmount)
-				.send({ from });
-			return transfer;
+			const [account] = await walletClient.getAddresses();
+
+			const { request } = await client.simulateContract({
+				account: account,
+				address: CONTRACT_ADDRESS,
+				abi: contractABI,
+				functionName: "transfer",
+				args: [recipient, amountFormat],
+			});
+
+			const txHash = await walletClient.writeContract(request);
+
+			const receipt = await client.waitForTransactionReceipt({ hash: txHash });
+
+			if (receipt.status === "success") {
+				console.log("Transacción exitosa");
+			} else {
+				throw new Error("Transacción fallida");
+			}
 		} catch (e) {
-			console.error("Error: ", e);
+			console.error("Error al transferir tokens: ", e);
 			throw e;
 		}
 	}
 
-	private formatAmount(amount: string, decimals: string): string {
-		const formatedAmount = new BigNumber(amount).dividedBy(
-			new BigNumber(10).pow(decimals)
-		);
-		return formatedAmount.toFixed();
-	}
-
-	async getName(): Promise<string> {
-		return await this.contract.methods.name().call();
-	}
-
-	private async getSymbol(): Promise<string> {
-		return await this.contract.methods.symbol().call();
-	}
-
-	private async getDecimals(): Promise<string> {
-		return await this.contract.methods.decimals().call();
+	private formatAmount(amount: bigint, decimals: number): string {
+		const formatedAmount = amount / BigInt(10 ** decimals);
+		return formatedAmount.toString();
 	}
 }

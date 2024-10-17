@@ -6,7 +6,7 @@ import { useContract } from "@/hooks/useContract";
 import { useEffect, useState } from "react";
 
 export default function Principal() {
-	const { contract, account, accounts, handleAccountChange } = useContract();
+	const { contract, account } = useContract();
 	const [balance, setBalance] = useState<string>("");
 
 	useEffect(() => {
@@ -21,12 +21,8 @@ export default function Principal() {
 	};
 
 	return (
-		<section className="w-full h-screen flex flex-col gap-y-4 bg-neutral-100 dark:bg-neutral-900">
-			<NavBar
-				accounts={accounts}
-				selectedAccount={account}
-				onAccountChange={handleAccountChange}
-			/>
+		<section className="w-full h-screen flex flex-col gap-y-4 bg-neutral-200 dark:bg-neutral-900">
+			<NavBar />
 			<section className="h-full flex flex-row gap-x-6 items-center justify-center">
 				<TokenInfo account={account!} balance={balance} />
 				<TransferToken
