@@ -132,6 +132,58 @@ export default class ContractService {
 		}
 	}
 
+	async approve(spender: Address, amount: string): Promise<void> {
+		try {
+			const decimals = await this.getDecimals();
+			const amountFormat = BigInt(
+				Math.floor(parseFloat(amount) * 10 ** decimals)
+			);
+
+			const [account] = await walletClient.getAddresses();
+
+			const { request } = await client.simulateContract({
+				account: account,
+				address: CONTRACT_ADDRESS,
+				abi: contractABI,
+				functionName: "approve",
+				args: [spender, amountFormat],
+			});
+
+			const txHash = await walletClient.writeContract(request);
+
+			const receipt = await client.waitForTransactionReceipt({ hash: txHash });
+
+			if (receipt.status === "success") {
+				console.log("Transacción exitosa");
+			} else {
+				throw new Error("Transacción fallida");
+			}
+		} catch (e) {
+			console.error("Error al aprobar tokens: ", e);
+			throw e;
+		}
+	}
+
+	async getAllowance(owner: Address, spender: Address): Promise<string> {
+		try {
+			const allowance = await client.readContract({
+				address: CONTRACT_ADDRESS,
+				abi: contractABI,
+				functionName: "allowance",
+				args: [owner, spender],
+			});
+
+			const simbol = await this.getSymbol();
+			const decimals = await this.getDecimals();
+			const amount = this.formatAmount(allowance, decimals);
+
+			return `${amount} ${simbol}`;
+		} catch (e) {
+			console.error("Error al obtener la aprobación: ", e);
+			throw e;
+		}
+	}
+
 	private formatAmount(amount: bigint, decimals: number): string {
 		const formatedAmount = amount / BigInt(10 ** decimals);
 		return formatedAmount.toString();

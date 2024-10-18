@@ -40,7 +40,7 @@ export default function Header() {
 			coolMode
 			showRecentTransactions
 		>
-			<header className="fixed w-full h-[5rem] px-6 flex items-center justify-between rounded-b-3xl bg-background shadow-md ">
+			<header className="fixed w-full h-[4rem] px-6 flex items-center justify-between rounded-b-3xl bg-background shadow-md ">
 				<NavLink to={"/"}>
 					<div className="flex gap-x-2 hover:scale-105 transition-all">
 						<Ghost className="h-6 w-6" />
