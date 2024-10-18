@@ -1,0 +1,8 @@
+version: '3.8'
+
+services:
+  front: 
+    image: christianca/as221s6_t04_kr_wallet:v2 
+    container_name: front-container
+    ports:
+      - "80:80"
