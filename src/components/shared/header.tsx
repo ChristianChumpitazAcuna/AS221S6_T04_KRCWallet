@@ -7,8 +7,9 @@ import {
 	RainbowKitProvider,
 } from "@rainbow-me/rainbowkit";
 import { useEffect, useState } from "react";
+import { NavLink } from "react-router-dom";
 
-export default function NavBar() {
+export default function Header() {
 	const [theme, setTheme] = useState<"light" | "dark">("light");
 
 	useEffect(() => {
@@ -39,18 +40,20 @@ export default function NavBar() {
 			coolMode
 			showRecentTransactions
 		>
-			<nav className="h-[4rem] px-6 flex items-center justify-between border-b bg-background">
-				<div className="flex items-center space-x-4">
-					<Ghost className="h-6 w-6" />
-					<span className="text-lg font-bold">KRC Wallet</span>
-				</div>
+			<header className="fixed w-full h-[5rem] px-6 flex items-center justify-between rounded-b-3xl bg-background shadow-md ">
+				<NavLink to={"/"}>
+					<div className="flex gap-x-2 hover:scale-105 transition-all">
+						<Ghost className="h-6 w-6" />
+						<span className="text-lg font-bold">KRC Wallet</span>
+					</div>
+				</NavLink>
 
 				<div className="flex items-center space-x-4">
 					<ThemeToggle currentTheme={theme} onThemeChange={handleThemeChange} />
 
 					<ConnectButton label="Conectar Wallet" />
 				</div>
-			</nav>
+			</header>
 		</RainbowKitProvider>
 	);
 }
