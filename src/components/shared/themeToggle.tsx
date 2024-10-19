@@ -6,16 +6,17 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import useThemeStore from "@/store/themeStore";
+import { useEffect } from "react";
 
-interface ThemeToggleProps {
-	currentTheme: "light" | "dark";
-	onThemeChange: (newTheme: "light" | "dark") => void;
-}
+export default function ThemeToggle() {
+	const { theme, setTheme } = useThemeStore();
 
-export default function ThemeToggle({
-	currentTheme,
-	onThemeChange,
-}: ThemeToggleProps) {
+	useEffect(() => {
+		document.documentElement.classList.remove("light", "dark");
+		document.documentElement.classList.add(theme);
+	}, [theme]);
+
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger
@@ -27,7 +28,7 @@ export default function ThemeToggle({
 					size="icon"
 					className="dark:bg-[#1A1B1F] border-none shadow-lg rounded-xl"
 				>
-					{currentTheme === "dark" ? (
+					{theme === "dark" ? (
 						<MoonStarIcon className="h-[1.2rem] w-[1.2rem] transition-transform duration-300 scale-100" />
 					) : (
 						<SunMedium className="h-[1.2rem] w-[1.2rem] transition-transform duration-300 scale-100" />
@@ -37,10 +38,10 @@ export default function ThemeToggle({
 				</Button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="end">
-				<DropdownMenuItem onClick={() => onThemeChange("light")}>
+				<DropdownMenuItem onClick={() => setTheme("light")}>
 					Light
 				</DropdownMenuItem>
-				<DropdownMenuItem onClick={() => onThemeChange("dark")}>
+				<DropdownMenuItem onClick={() => setTheme("dark")}>
 					Dark
 				</DropdownMenuItem>
 			</DropdownMenuContent>

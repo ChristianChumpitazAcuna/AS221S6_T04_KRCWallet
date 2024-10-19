@@ -26,14 +26,18 @@ export default function MenuBar() {
 		>
 			<ul className="flex items-center space-x-2">
 				<MenuItem to="/" icon={<Home size={24} />} label="Inicio" />
-				<MenuItem to="/transfer" icon={<Wallet size={24} />} label="Wallet" />
+				<MenuItem
+					to="app/transfer"
+					icon={<Wallet size={24} />}
+					label="Wallet"
+				/>
 				<li className="rounded-full p-2 bg-foreground text-background hover:scale-105 transition-all">
 					<button className="flex items-center justify-center w-8 h-8">
 						<Plus size={24} />
 					</button>
 				</li>
 				<MenuItem to="/" icon={<Settings size={24} />} label="Ajustes" />
-				<MenuItem to="/userInfo" icon={<User size={24} />} label="Perfil" />
+				<MenuItem to="app/userInfo" icon={<User size={24} />} label="Perfil" />
 			</ul>
 		</nav>
 	);

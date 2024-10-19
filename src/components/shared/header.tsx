@@ -1,4 +1,3 @@
-import { Ghost } from "lucide-react";
 import ThemeToggle from "./themeToggle";
 import {
 	ConnectButton,
@@ -6,23 +5,12 @@ import {
 	lightTheme,
 	RainbowKitProvider,
 } from "@rainbow-me/rainbowkit";
-import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
+import Logo from "../ui/icons/icons";
+import useThemeStore from "@/store/themeStore";
 
 export default function Header() {
-	const [theme, setTheme] = useState<"light" | "dark">("light");
-
-	useEffect(() => {
-		const localTheme = localStorage.getItem("theme");
-		setTheme(localTheme as "light" | "dark");
-		document.documentElement.classList.toggle("dark", localTheme === "dark");
-	}, []);
-
-	const handleThemeChange = (newTheme: "light" | "dark") => {
-		setTheme(newTheme);
-		localStorage.setItem("theme", newTheme);
-		document.documentElement.classList.toggle("dark", newTheme === "dark");
-	};
+	const { theme } = useThemeStore();
 
 	return (
 		<RainbowKitProvider
@@ -42,14 +30,14 @@ export default function Header() {
 		>
 			<header className="fixed w-full h-[4rem] px-6 flex items-center justify-between rounded-b-3xl bg-background shadow-md ">
 				<NavLink to={"/"}>
-					<div className="flex gap-x-2 hover:scale-105 transition-all">
-						<Ghost className="h-6 w-6" />
+					<div className="flex gap-x-2 items-center hover:scale-105 transition-all duration-700 ease-in-out">
+						<Logo className="fill-foreground" />
 						<span className="text-lg font-bold">KRC Wallet</span>
 					</div>
 				</NavLink>
 
 				<div className="flex items-center space-x-4">
-					<ThemeToggle currentTheme={theme} onThemeChange={handleThemeChange} />
+					<ThemeToggle />
 
 					<ConnectButton label="Conectar Wallet" />
 				</div>
