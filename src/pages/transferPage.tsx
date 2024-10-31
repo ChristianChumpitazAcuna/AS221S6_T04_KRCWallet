@@ -42,8 +42,8 @@ export default function TransferPage() {
 	};
 
 	return (
-		<section className="w-full h-screen flex justify-center">
-			<Card className="w-1/2 h-fit mt-20">
+		<section className="w-full h-full flex justify-center">
+			<Card className="w-1/2 h-fit">
 				<CardHeader>
 					<CardTitle className="text-2xl font-bold text-center">
 						Operaciones de Token

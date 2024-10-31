@@ -7,6 +7,8 @@ import { toast } from "sonner";
 import { LoaderCircle } from "lucide-react";
 import ContractService from "@/service/contractService";
 import { Address } from "viem";
+import { isValidAddress, isValidAmount } from "@/validations/utlis/validators";
+import { cn } from "@/lib/utils";
 
 interface TransferTokenProps {
 	contract: ContractService;
@@ -22,7 +24,12 @@ export default function TransferToken({
 	const [loading, setLoading] = useState<boolean>(false);
 
 	const transferToken = async () => {
-		if (contract && receiver) {
+		if (
+			contract &&
+			receiver &&
+			isValidAmount(amount) &&
+			isValidAddress(receiver)
+		) {
 			setLoading(true);
 			try {
 				await contract.transfer(receiver, amount);
@@ -37,7 +44,7 @@ export default function TransferToken({
 	};
 
 	return (
-		<Card>
+		<Card className="border-none shadow-none">
 			<CardContent className="space-y-6">
 				<div className="space-y-2 pt-4">
 					<label className="text-sm text-muted-foreground">
@@ -47,7 +54,16 @@ export default function TransferToken({
 						placeholder="0x..."
 						value={receiver}
 						onChange={(e) => setReceiver(e.target.value as Address)}
+						className={cn(
+							"transition-colors",
+							receiver &&
+								!isValidAddress(receiver) &&
+								"border-red-500 focus-visible:ring-red-500"
+						)}
 					/>
+					{receiver && !isValidAddress(receiver) && (
+						<p className="text-red-500 text-sm">Dirección inválida</p>
+					)}
 				</div>
 				<div className="space-y-2">
 					<label className="text-sm text-muted-foreground">Monto</label>
@@ -55,13 +71,27 @@ export default function TransferToken({
 						placeholder="0.00"
 						value={amount}
 						onChange={(e) => setAmount(e.target.value)}
+						className={cn(
+							"transition-colors",
+							amount &&
+								!isValidAmount(amount) &&
+								"border-red-500 focus-visible:ring-red-500"
+						)}
 					/>
+					{amount && !isValidAmount(amount) && (
+						<p className="text-red-500 text-sm">Monto inválido</p>
+					)}
 				</div>
 
 				<Button
 					onClick={transferToken}
 					type="submit"
-					disabled={loading}
+					disabled={
+						loading ||
+						!receiver ||
+						!isValidAddress(receiver) ||
+						!isValidAmount(amount)
+					}
 					className="w-full"
 				>
 					{loading ? (

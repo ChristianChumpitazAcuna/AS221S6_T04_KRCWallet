@@ -6,23 +6,36 @@ import {
 	createWalletClient,
 	custom,
 	http,
+	PublicClient,
+	WalletClient,
 } from "viem";
 
 const CONTRACT_ADDRESS = import.meta.env.VITE_CONTRACT_ADDRESS as Address;
 
-const client = createPublicClient({
-	chain: holesky,
-	transport: http(),
-});
-const walletClient = createWalletClient({
-	chain: holesky,
-	transport: custom(window.ethereum),
-});
-
 export default class ContractService {
+	private walletClient: WalletClient | null = null;
+	private publicClient: PublicClient;
+
+	constructor() {
+		this.publicClient = createPublicClient({
+			chain: holesky,
+			transport: http(),
+		});
+		this.connectWallet();
+	}
+
+	private connectWallet() {
+		if (typeof window !== "undefined" && window.ethereum) {
+			this.walletClient = createWalletClient({
+				chain: holesky,
+				transport: custom(window.ethereum),
+			});
+		}
+	}
+
 	async getName(): Promise<string> {
 		try {
-			const name = await client.readContract({
+			const name = await this.publicClient.readContract({
 				address: CONTRACT_ADDRESS,
 				abi: contractABI,
 				functionName: "name",
@@ -37,7 +50,7 @@ export default class ContractService {
 
 	async getSymbol(): Promise<string> {
 		try {
-			const symbol = client.readContract({
+			const symbol = this.publicClient.readContract({
 				address: CONTRACT_ADDRESS,
 				abi: contractABI,
 				functionName: "symbol",
@@ -52,7 +65,7 @@ export default class ContractService {
 
 	async getDecimals(): Promise<number> {
 		try {
-			const decimals = client.readContract({
+			const decimals = this.publicClient.readContract({
 				address: CONTRACT_ADDRESS,
 				abi: contractABI,
 				functionName: "decimals",
@@ -67,7 +80,7 @@ export default class ContractService {
 
 	async getTotalSupply(): Promise<bigint> {
 		try {
-			const totalSupply = client.readContract({
+			const totalSupply = this.publicClient.readContract({
 				address: CONTRACT_ADDRESS,
 				abi: contractABI,
 				functionName: "totalSupply",
@@ -82,7 +95,7 @@ export default class ContractService {
 
 	async getBalanceOf(account: Address): Promise<string> {
 		try {
-			const balance = await client.readContract({
+			const balance = await this.publicClient.readContract({
 				address: CONTRACT_ADDRESS,
 				abi: contractABI,
 				functionName: "balanceOf",
@@ -101,15 +114,19 @@ export default class ContractService {
 	}
 
 	async transfer(recipient: Address, amount: string): Promise<void> {
+		if (!this.walletClient) {
+			throw new Error("No se ha conectado la billetera");
+		}
+
 		try {
 			const decimals = await this.getDecimals();
 			const amountFormat = BigInt(
 				Math.floor(parseFloat(amount) * 10 ** decimals)
 			);
 
-			const [account] = await walletClient.getAddresses();
+			const [account] = await this.walletClient.getAddresses();
 
-			const { request } = await client.simulateContract({
+			const { request } = await this.publicClient.simulateContract({
 				account: account,
 				address: CONTRACT_ADDRESS,
 				abi: contractABI,
@@ -117,9 +134,11 @@ export default class ContractService {
 				args: [recipient, amountFormat],
 			});
 
-			const txHash = await walletClient.writeContract(request);
+			const txHash = await this.walletClient.writeContract(request);
 
-			const receipt = await client.waitForTransactionReceipt({ hash: txHash });
+			const receipt = await this.publicClient.waitForTransactionReceipt({
+				hash: txHash,
+			});
 
 			if (receipt.status === "success") {
 				console.log("Transacción exitosa");
@@ -133,15 +152,19 @@ export default class ContractService {
 	}
 
 	async approve(spender: Address, amount: string): Promise<void> {
+		if (!this.walletClient) {
+			throw new Error("No se ha conectado la billetera");
+		}
+
 		try {
 			const decimals = await this.getDecimals();
 			const amountFormat = BigInt(
 				Math.floor(parseFloat(amount) * 10 ** decimals)
 			);
 
-			const [account] = await walletClient.getAddresses();
+			const [account] = await this.walletClient.getAddresses();
 
-			const { request } = await client.simulateContract({
+			const { request } = await this.publicClient.simulateContract({
 				account: account,
 				address: CONTRACT_ADDRESS,
 				abi: contractABI,
@@ -149,9 +172,11 @@ export default class ContractService {
 				args: [spender, amountFormat],
 			});
 
-			const txHash = await walletClient.writeContract(request);
+			const txHash = await this.walletClient.writeContract(request);
 
-			const receipt = await client.waitForTransactionReceipt({ hash: txHash });
+			const receipt = await this.publicClient.waitForTransactionReceipt({
+				hash: txHash,
+			});
 
 			if (receipt.status === "success") {
 				console.log("Transacción exitosa");
@@ -166,7 +191,7 @@ export default class ContractService {
 
 	async getAllowance(owner: Address, spender: Address): Promise<string> {
 		try {
-			const allowance = await client.readContract({
+			const allowance = await this.publicClient.readContract({
 				address: CONTRACT_ADDRESS,
 				abi: contractABI,
 				functionName: "allowance",

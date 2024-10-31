@@ -8,11 +8,12 @@ import {
 } from "react-icons/fa";
 import { Button } from "../ui/button";
 import { NavLink } from "react-router-dom";
+import "./../../background.css";
 
 // Componente Descripción
 export const Description = () => {
 	return (
-		<section className="h-screen w-full px-10 flex flex-col items-center justify-center">
+		<section className="h-screen w-full px-10 flex flex-col items-center justify-center heroBackground-dark">
 			<div className="flex justify-center items-center">
 				<div className="w-3/4">
 					<h1 className="text-5xl font-bold mb-4">Bienvenido a KRC Wallet</h1>

@@ -5,11 +5,15 @@ import {
 	lightTheme,
 	RainbowKitProvider,
 } from "@rainbow-me/rainbowkit";
-import { NavLink } from "react-router-dom";
-import Logo from "../ui/icons/icons";
 import useThemeStore from "@/store/themeStore";
+import { Menu } from "lucide-react";
+import { Button } from "../ui/button";
 
-export default function Header() {
+interface HeaderProps {
+	onSidebarOpen: () => void;
+}
+
+export default function Header({ onSidebarOpen }: HeaderProps) {
 	const { theme } = useThemeStore();
 
 	return (
@@ -28,13 +32,18 @@ export default function Header() {
 			coolMode
 			showRecentTransactions
 		>
-			<header className="fixed w-full h-[4rem] px-6 flex items-center justify-between rounded-b-3xl bg-background shadow-md ">
-				<NavLink to={"/"}>
-					<div className="flex gap-x-2 items-center hover:scale-105 transition-all duration-700 ease-in-out">
-						<Logo className="fill-foreground" />
-						<span className="text-lg font-bold">KRC Wallet</span>
-					</div>
-				</NavLink>
+			<header
+				className="w-full h-[4rem] px-6 flex items-center justify-between 
+			rounded-b-lg bg-primary-foreground border-2"
+			>
+				<Button
+					onClick={onSidebarOpen}
+					variant="outline"
+					size="icon"
+					className="dark:bg-[#1A1B1F] border-none shadow-lg rounded-xl"
+				>
+					<Menu className="h-5 w-5" />
+				</Button>
 
 				<div className="flex items-center space-x-4">
 					<ThemeToggle />

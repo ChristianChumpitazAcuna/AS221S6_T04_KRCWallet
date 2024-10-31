@@ -18,7 +18,7 @@ export default function UserInfoPage() {
 	};
 
 	return (
-		<section className="h-screen w-full flex flex-row items-center justify-center gap-x-4">
+		<section className="h-fit w-full flex flex-row  justify-center gap-x-4">
 			<TokenInfo account={account!} balance={balance} />
 		</section>
 	);

@@ -16,6 +16,7 @@ import {
 } from "../ui/dialog";
 import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
+import { isValidAddress, isValidAmount } from "@/validations/utlis/validators";
 
 interface AprroveTransferProps {
 	account: Address;
@@ -27,18 +28,18 @@ export default function ApproveTransfer({
 	contract,
 }: AprroveTransferProps) {
 	const [amount, setAmount] = useState<string>("");
-	const [spender, setSpender] = useState<string>("");
+	const [spender, setSpender] = useState<Address>();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
 	const [currentAllowance, setCurrentAllowance] = useState<string>("");
 
-	const isValidAddress = (address: string) =>
-		/^0x[a-fA-F0-9]{40}$/.test(address);
-	const isValidAmount = (value: string) =>
-		/^\d+(\.\d+)?$/.test(value) && parseFloat(value) > 0;
-
 	const handleApproval = async () => {
-		if (contract && isValidAddress(spender) && isValidAmount(amount)) {
+		if (
+			contract &&
+			spender &&
+			isValidAddress(spender) &&
+			isValidAmount(amount)
+		) {
 			setLoading(true);
 			try {
 				await contract.approve(spender as Address, amount);
@@ -46,7 +47,7 @@ export default function ApproveTransfer({
 				//   onApproval()
 				setIsDialogOpen(false);
 				setAmount("");
-				setSpender("");
+				setSpender(undefined);
 			} catch (e) {
 				toast.error("Error al aprobar");
 			} finally {
@@ -56,7 +57,7 @@ export default function ApproveTransfer({
 	};
 
 	const checkCurrentAllowance = async () => {
-		if (contract && isValidAddress(spender)) {
+		if (contract && spender && isValidAddress(spender)) {
 			try {
 				const allowance = await contract.getAllowance(
 					account,
@@ -71,7 +72,7 @@ export default function ApproveTransfer({
 	};
 
 	return (
-		<Card>
+		<Card className="border-none shadow-none">
 			<CardContent className="space-y-6">
 				<div className="space-y-2 pt-4">
 					<label htmlFor="spender" className="text-sm text-muted-foreground">
@@ -81,7 +82,7 @@ export default function ApproveTransfer({
 						id="spender"
 						value={spender}
 						onChange={(e) => {
-							setSpender(e.target.value);
+							setSpender(e.target.value as Address);
 							setCurrentAllowance("");
 						}}
 						onBlur={checkCurrentAllowance}
@@ -97,8 +98,8 @@ export default function ApproveTransfer({
 						<p className="text-xs text-red-500">Dirección inválida</p>
 					)}
 					{currentAllowance && (
-						<p className="text-xs text-muted-foreground">
-							Aprobación actual: {currentAllowance} tokens
+						<p className="px-3 py-2 w-fit rounded-full font-extrabold text-xs bg-green-500/15 text-green-500">
+							Aprobación actual: {currentAllowance}
 						</p>
 					)}
 				</div>
@@ -128,7 +129,9 @@ export default function ApproveTransfer({
 					<DialogTrigger asChild>
 						<Button
 							className="w-full"
-							disabled={!isValidAddress(spender) || !isValidAmount(amount)}
+							disabled={
+								!spender || !isValidAddress(spender) || !isValidAmount(amount)
+							}
 						>
 							Revisar Aprobación
 						</Button>
