@@ -59,8 +59,7 @@ export default function TransferPage() {
 							<span className="font-medium">Balance actual:</span>
 						</div>
 						<span className="text-lg font-bold">{balance}</span>
-					</div>
-
+					</div>					
 					<div className="grid grid-cols-2 gap-4">
 						<Button
 							variant={selectedOption === "transfer" ? "default" : "outline"}
@@ -89,6 +88,7 @@ export default function TransferPage() {
 					)}
 				</CardContent>
 			</Card>
+			
 		</section>
 	);
 }

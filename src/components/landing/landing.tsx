@@ -77,6 +77,7 @@ export const Objectives = () => {
 					</div>
 				))}
 			</div>
+			
 		</section>
 	);
 };
@@ -189,10 +190,13 @@ export const Conclusions = () => {
 				<FaRegLightbulb className="text-4xl text-yellow-300" />
 				<h2 className="text-3xl font-semibold">Conclusiones</h2>
 			</div>
+			
 			<p className="text-lg dark:text-white text-gray-1000">
 				KRC Wallet ofrece una plataforma eficiente y segura para la gestión de
 				criptomonedas, asegurando una experiencia de usuario fácil y rápida.
 			</p>
 		</section>
+		
 	);
+	
 };

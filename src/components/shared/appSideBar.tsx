@@ -47,7 +47,7 @@ export default function AppSidebar() {
 						label="Wallet"
 					/>
 					<MenuItem
-						to="/app"
+						to="/app/settings"
 						icon={<Settings size={24} strokeWidth={1.5} />}
 						label="Ajustes"
 					/>
