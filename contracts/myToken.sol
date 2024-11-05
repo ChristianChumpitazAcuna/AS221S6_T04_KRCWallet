@@ -2,7 +2,7 @@
 pragma solidity >=0.8.2 <0.9.0;
 
 contract MyToken {
-    string public name = "KR Coin";
+    string public name = "Kripto Coin";
     string public symbol = "KRC";
     uint8 public decimals = 18;
     uint256 private _totalSupply;
@@ -18,7 +18,7 @@ contract MyToken {
     );
 
     constructor(uint256 _initialSupply) {
-        _totalSupply = _initialSupply * 10 ** uint256(decimals);
+        _totalSupply = _initialSupply * 10**uint256(decimals);
         _balances[msg.sender] = _totalSupply;
         emit Transfer(address(0), msg.sender, _totalSupply);
     }
@@ -36,10 +36,11 @@ contract MyToken {
         return true;
     }
 
-    function allowance(
-        address owner,
-        address spender
-    ) public view returns (uint256) {
+    function allowance(address owner, address spender)
+        public
+        view
+        returns (uint256)
+    {
         return _allowances[owner][spender];
     }
 
@@ -90,7 +91,11 @@ contract MyToken {
         emit Transfer(sender, recipient, amount);
     }
 
-    function _approve(address owner, address spender, uint256 amount) internal {
+    function _approve(
+        address owner,
+        address spender,
+        uint256 amount
+    ) internal {
         require(owner != address(0), "ERC20: Aprobar desde la direccion 0");
         require(spender != address(0), "ERC20: Aprobar a la direccion 0");
         _allowances[owner][spender] = amount;

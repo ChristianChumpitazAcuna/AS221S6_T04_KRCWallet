@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
 import { Sidebar, SidebarContent } from "../ui/sidebar";
-import { Home, Settings, User, Wallet } from "lucide-react";
+import { Home, Settings, StoreIcon, User, Wallet } from "lucide-react";
 import Logo from "../ui/icons/icons";
 
 interface MenuItemProps {
@@ -45,6 +45,11 @@ export default function AppSidebar() {
 						to="/app/transfer"
 						icon={<Wallet size={24} strokeWidth={1.5} />}
 						label="Wallet"
+					/>
+					<MenuItem
+						to="/app/sellItem"
+						icon={<StoreIcon size={24} strokeWidth={1.5} />}
+						label="Tienda"
 					/>
 					<MenuItem
 						to="/app"
