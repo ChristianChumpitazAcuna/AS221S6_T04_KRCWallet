@@ -1,5 +1,3 @@
-import React from "react";
-
 const Logo = ({ className = "" }) => (
 	<svg
 		className={`h-14 ${className}`}
