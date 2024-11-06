@@ -3,8 +3,14 @@ FROM node:18-alpine as build
 
 WORKDIR /app
 
+# Actualizar npm a la versión 10.9.0
+RUN npm install -g npm@10.9.0
+
+# Copiar y instalar dependencias
 COPY package*.json ./
-RUN npm install
+
+# Limpia y reinstala dependencias si es necesario
+RUN rm -rf node_modules package-lock.json && npm install
 
 COPY . .
 RUN npm run build
