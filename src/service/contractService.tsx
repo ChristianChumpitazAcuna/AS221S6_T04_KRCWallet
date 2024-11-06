@@ -11,6 +11,7 @@ import {
 } from "viem";
 import { marketplaceABI } from "@/ABI/marketplaceABI";
 import { createItem, Item } from "@/interfaces/item";
+import { extracErrorMessages } from "@/validations/utlis/errorUtils";
 
 const CONTRACT_TOKEN_ADDRESS = import.meta.env
 	.VITE_CONTRACT_TOKEN_ADDRESS as Address;
@@ -49,7 +50,7 @@ export default class ContractService {
 			return name;
 		} catch (e) {
 			console.error("Error al obtener el nombre del contrato: ", e);
-			throw e;
+			throw new Error(extracErrorMessages(e));
 		}
 	}
 
@@ -64,7 +65,7 @@ export default class ContractService {
 			return symbol;
 		} catch (e) {
 			console.error("Error al obtener el simbolo del contrato: ", e);
-			throw e;
+			throw new Error(extracErrorMessages(e));
 		}
 	}
 
@@ -79,7 +80,7 @@ export default class ContractService {
 			return decimals;
 		} catch (e) {
 			console.error("Error al obtener los decimales del contrato: ", e);
-			throw e;
+			throw new Error(extracErrorMessages(e));
 		}
 	}
 
@@ -113,7 +114,7 @@ export default class ContractService {
 			return `${amount} ${simbol}`;
 		} catch (e) {
 			console.error("Error al obtener el balance: ", e);
-			throw e;
+			throw new Error(extracErrorMessages(e));
 		}
 	}
 
@@ -136,7 +137,7 @@ export default class ContractService {
 			await this.writeContract(request);
 		} catch (e) {
 			console.error("Error al transferir tokens: ", e);
-			throw e;
+			throw new Error(extracErrorMessages(e));
 		}
 	}
 
@@ -159,7 +160,7 @@ export default class ContractService {
 			await this.writeContract(request);
 		} catch (e) {
 			console.error("Error al aprobar tokens: ", e);
-			throw e;
+			throw new Error(extracErrorMessages(e));
 		}
 	}
 
@@ -178,7 +179,7 @@ export default class ContractService {
 			return `${amount} ${simbol}`;
 		} catch (e) {
 			console.error("Error al obtener la aprobación: ", e);
-			throw e;
+			throw new Error(extracErrorMessages(e));
 		}
 	}
 
@@ -205,7 +206,7 @@ export default class ContractService {
 			await this.writeContract(request);
 		} catch (e) {
 			console.error("Error al transferir tokens: ", e);
-			throw e;
+			throw new Error(extracErrorMessages(e));
 		}
 	}
 
@@ -227,7 +228,7 @@ export default class ContractService {
 			await this.writeContract(request);
 		} catch (e) {
 			console.error("Error al vender item: ", e);
-			throw e;
+			throw new Error(extracErrorMessages(e));
 		}
 	}
 
@@ -248,7 +249,7 @@ export default class ContractService {
 			await this.writeContract(request);
 		} catch (e) {
 			console.error("Error al comprar item: ", e);
-			throw e;
+			throw new Error(extracErrorMessages(e));
 		}
 	}
 
@@ -275,7 +276,7 @@ export default class ContractService {
 			return itemsFormatted;
 		} catch (e) {
 			console.error("Error al obtener items: ", e);
-			throw e;
+			throw new Error(extracErrorMessages(e));
 		}
 	}
 
@@ -303,7 +304,7 @@ export default class ContractService {
 			return itemsFormatted;
 		} catch (e) {
 			console.error("Error al obtener items: ", e);
-			throw e;
+			throw new Error(extracErrorMessages(e));
 		}
 	}
 

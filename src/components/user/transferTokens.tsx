@@ -104,7 +104,7 @@ export default function TransferToken({
 					)}
 				</Button>
 			</CardContent>
-			<Toaster position="top-right" />
+			<Toaster position="top-right" richColors />
 		</Card>
 	);
 }

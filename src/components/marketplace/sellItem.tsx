@@ -15,14 +15,20 @@ import {
 } from "../ui/dialog";
 import { DialogHeader } from "../ui/dialog";
 import { Card } from "../ui/card";
-import { PlusCircle } from "lucide-react";
+import { ArrowRight, Loader2, PlusCircle } from "lucide-react";
+import { extracErrorMessages } from "@/validations/utlis/errorUtils";
 
 interface SellItemProps {
 	contract: ContractService;
 	account: Address;
+	onRefreshData: () => void;
 }
 
-export default function SellItem({ contract, account }: SellItemProps) {
+export default function SellItem({
+	contract,
+	account,
+	onRefreshData,
+}: SellItemProps) {
 	const [item, setItem] = useState<createItem>({
 		name: "",
 		description: "",
@@ -40,9 +46,18 @@ export default function SellItem({ contract, account }: SellItemProps) {
 				await contract.sellItem(item);
 				toast.success("Item vendido correctamente");
 			} catch (error) {
-				toast.error("Error al vender item");
+				const errorMessage = extracErrorMessages(error);
+				toast.error(errorMessage);
 			} finally {
 				setLoading(false);
+				setItem({
+					name: "",
+					description: "",
+					imageURI: "",
+					price: "",
+				});
+				setIsDialogOpen(false);
+				onRefreshData();
 			}
 		}
 	};
@@ -75,13 +90,13 @@ export default function SellItem({ contract, account }: SellItemProps) {
 						onChange={(e) => setItem({ ...item, description: e.target.value })}
 					/>
 					<Input
-						type="text"
+						type="url"
 						placeholder="URL de la imagen"
 						value={item.imageURI}
 						onChange={(e) => setItem({ ...item, imageURI: e.target.value })}
 					/>
 					<Input
-						type="text"
+						type="number"
 						placeholder="Precio"
 						value={item.price}
 						onChange={(e) => setItem({ ...item, price: e.target.value })}
@@ -91,7 +106,16 @@ export default function SellItem({ contract, account }: SellItemProps) {
 							Cancelar
 						</Button>
 						<Button onClick={sellItem} disabled={loading} type="submit">
-							{loading ? "Vendiendo..." : "Vender"}
+							{loading ? (
+								<>
+									<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+									Vendiendo...
+								</>
+							) : (
+								<>
+									Vender Item <ArrowRight className="ml-2 h-4 w-4" />
+								</>
+							)}
 						</Button>
 					</div>
 				</Card>

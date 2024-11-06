@@ -5,6 +5,7 @@ import LandingPage from "./pages/landingPage";
 import AppLayout from "./layouts/appLayout";
 import Welcome from "./components/shared/welcome";
 import MarketPlacePage from "./pages/marketPlacePage";
+import SettingPage from "./pages/settingPage";
 
 const router = createBrowserRouter([
 	{
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
 			{
 				path: "sellItem",
 				Component: MarketPlacePage,
+			},
+			{
+				path: "settings",
+				Component: SettingPage,
 			},
 		],
 	},

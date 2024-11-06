@@ -1,65 +1,58 @@
 import { Item } from "@/interfaces/item";
-import ContractService from "@/service/contractService";
-import { useEffect, useState } from "react";
-import { Address } from "viem";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+
+import { Card, CardContent, CardFooter } from "../ui/card";
+import { ShoppingCart } from "lucide-react";
+import { Button } from "../ui/button";
 
 interface AllItemsProps {
-	contract: ContractService;
-	account: Address;
+	data: Item[];
+	isLoading: boolean;
+	onPurchaseClick: (item: Item) => void;
 }
 
-export default function AllItems({ contract, account }: AllItemsProps) {
-	const [items, setItems] = useState<Item[]>([]);
-	const [loading, setLoading] = useState<boolean>(false);
-
-	useEffect(() => {
-		getAllItems();
-	}, []);
-
-	const getAllItems = async () => {
-		if (contract && account) {
-			setLoading(true);
-			try {
-				const data = await contract.getAllItems();
-				setItems(data);
-			} catch (error) {
-				console.error("Error al obtener los items: ", error);
-			} finally {
-				setLoading(false);
-			}
-		}
-	};
-
+export default function AllItems({
+	data,
+	isLoading,
+	onPurchaseClick,
+}: AllItemsProps) {
 	return (
-		<Card className="w-full h-full">
-			<CardHeader>
-				<CardTitle className="text-2xl font-bold">Todos los items</CardTitle>
-			</CardHeader>
-			<CardContent>
-				{loading ? (
+		<>
+			<section className="w-full h-full overflow-y-auto p-6 rounded-lg border-2">
+				{isLoading ? (
 					<p className="text-center text-muted-foreground">Cargando items...</p>
 				) : (
-					<div className="flex flex-row gap-x-3">
-						{items.map((item) => (
-							<Card key={item.id}>
-								<CardContent className="p-4">
+					<div className="grid grid-cols-4 gap-2">
+						{data.map((item) => (
+							<Card key={item.id} className="w-[15rem]">
+								<CardContent>
 									<img
 										src={item.imageURI}
 										alt={item.name}
-										className="w-full h-48 object-cover rounded-md mb-4"
+										className="w-full h-48 object-cover rounded-md mt-4 mb-4"
 									/>
 									<h3 className="text-lg font-semibold mb-2">{item.name}</h3>
 									<p className="text-sm text-muted-foreground mb-2">
 										{item.description}
 									</p>
-									<p className="text-lg font-bold">{item.price} KRC</p>
+									<p className="text-sm font-bold px-3 py-1 bg-foreground/5 w-fit rounded-2xl">
+										{item.price} KRC
+									</p>
 								</CardContent>
+								<CardFooter className="flex justify-center">
+									<Button
+										className="flex items-center gap-x-2"
+										variant={"outline"}
+										onClick={() => onPurchaseClick(item)}
+									>
+										<ShoppingCart className="w-5 h-5" />
+										<span>Comprar</span>
+									</Button>
+								</CardFooter>
 							</Card>
 						))}
 					</div>
 				)}
-			</CardContent>
-		</Card>
+			</section>
+		</>
 	);
 }

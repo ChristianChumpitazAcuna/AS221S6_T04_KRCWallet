@@ -3,7 +3,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Address } from "viem";
 import { Card, CardContent, CardFooter } from "../ui/card";
-import { ArrowRight, Loader2, ShieldCheck } from "lucide-react";
+import { ArrowRight, CheckCircle, Copy, Loader2, Shield } from "lucide-react";
 import { Input } from "../ui/input";
 import {
 	Dialog,
@@ -17,6 +17,9 @@ import {
 import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
 import { isValidAddress, isValidAmount } from "@/validations/utlis/validators";
+import { Toaster } from "../ui/sonner";
+
+const spender = import.meta.env.VITE_CONTRACT_MARKETPLACE_ADDRESS as Address;
 
 interface AprroveTransferProps {
 	account: Address;
@@ -28,7 +31,6 @@ export default function ApproveTransfer({
 	contract,
 }: AprroveTransferProps) {
 	const [amount, setAmount] = useState<string>("");
-	const [spender, setSpender] = useState<Address>();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
 	const [currentAllowance, setCurrentAllowance] = useState<string>("");
@@ -42,12 +44,10 @@ export default function ApproveTransfer({
 		) {
 			setLoading(true);
 			try {
-				await contract.approve(spender as Address, amount);
+				await contract.approve(spender, amount);
 				toast.success("Aprobación exitosa");
-				//   onApproval()
 				setIsDialogOpen(false);
 				setAmount("");
-				setSpender(undefined);
 			} catch (e) {
 				toast.error("Error al aprobar");
 			} finally {
@@ -74,34 +74,12 @@ export default function ApproveTransfer({
 	return (
 		<Card className="border-none shadow-none">
 			<CardContent className="space-y-6">
-				<div className="space-y-2 pt-4">
-					<label htmlFor="spender" className="text-sm text-muted-foreground">
-						Cuenta Autorizada
-					</label>
-					<Input
-						id="spender"
-						value={spender}
-						onChange={(e) => {
-							setSpender(e.target.value as Address);
-							setCurrentAllowance("");
-						}}
-						onBlur={checkCurrentAllowance}
-						placeholder="0x..."
-						className={cn(
-							"transition-colors",
-							spender &&
-								!isValidAddress(spender) &&
-								"border-red-500 focus-visible:ring-red-500"
-						)}
-					/>
-					{spender && !isValidAddress(spender) && (
-						<p className="text-xs text-red-500">Dirección inválida</p>
-					)}
-					{currentAllowance && (
-						<p className="px-3 py-2 w-fit rounded-full font-extrabold text-xs bg-green-500/15 text-green-500">
-							Aprobación actual: {currentAllowance}
-						</p>
-					)}
+				<div className="flex items-center justify-between px-3 py-2 bg-muted/50 rounded-lg">
+					<div className="flex items-center gap-2">
+						<Shield className="w-4 h-4 text-primary" />
+						<span className="text-sm font-medium">Aprobación actual:</span>
+					</div>
+					<span className="font-bold tabular-nums">{currentAllowance}</span>
 				</div>
 				<div className="space-y-2">
 					<label htmlFor="amount" className="text-sm text-muted-foreground">
@@ -111,6 +89,7 @@ export default function ApproveTransfer({
 						id="amount"
 						value={amount}
 						onChange={(e) => setAmount(e.target.value)}
+						onChangeCapture={checkCurrentAllowance}
 						placeholder="0.00"
 						className={cn(
 							"transition-colors",
@@ -138,30 +117,52 @@ export default function ApproveTransfer({
 					</DialogTrigger>
 					<DialogContent>
 						<DialogHeader>
-							<DialogTitle>Confirmar Aprobación</DialogTitle>
-							<DialogDescription>
-								Estás a punto de permitir que otra cuenta gaste tokens en tu
-								nombre. Por favor, revisa los detalles antes de confirmar.
+							<DialogTitle className="flex items-center gap-2">
+								<Shield className="w-5 h-5 text-primary" />
+								Confirmar Aprobación
+							</DialogTitle>
+							<DialogDescription className="text-sm text-muted-foreground">
+								Estás a punto de permitir que MarketPlace gaste tokens KRC de tu
+								cuenta en tu nombre para realizar compras.
 							</DialogDescription>
 						</DialogHeader>
-						<div className="space-y-4 py-4">
-							<div className="flex items-center justify-between">
-								<span className="font-medium">Tu cuenta:</span>
-								<span className="text-sm text-muted-foreground break-all">
-									{account}
-								</span>
+						<div className="space-y-4">
+							<div className="space-y-2">
+								<label className="text-sm font-medium text-muted-foreground">
+									Tu cuenta:
+								</label>
+								<div className="flex items-center gap-2 p-2 bg-muted/40 rounded-lg">
+									<code className="text-xs flex-1 font-mono truncate">
+										{account}
+									</code>
+									<Button variant="ghost" size="icon" className="h-8 w-8">
+										<Copy className="h-4 w-4" />
+									</Button>
+								</div>
 							</div>
-							<div className="flex items-center justify-between">
-								<span className="font-medium">Cuenta autorizada:</span>
-								<span className="text-sm text-muted-foreground break-all">
-									{spender}
-								</span>
+
+							<div className="space-y-2">
+								<label className="text-sm font-medium text-muted-foreground">
+									Cuenta autorizada:
+								</label>
+								<div className="flex items-center gap-2 p-2 bg-muted/40 rounded-lg">
+									<code className="text-xs flex-1 font-mono truncate">
+										{spender}
+									</code>
+									<Button variant="ghost" size="icon" className="h-8 w-8">
+										<Copy className="h-4 w-4" />
+									</Button>
+								</div>
 							</div>
-							<div className="flex items-center justify-between">
-								<span className="font-medium">Cantidad a aprobar:</span>
-								<span className="text-lg font-bold">
-									{amount} <ShieldCheck className="inline h-5 w-5 ml-1" />
-								</span>
+
+							<div className="space-y-2">
+								<label className="text-sm font-medium text-muted-foreground">
+									Cantidad a aprobar:
+								</label>
+								<div className="flex items-center gap-2 p-3 bg-primary/10 rounded-lg border border-primary/20">
+									<span className="font-bold text-lg">{amount} KRC</span>
+									<CheckCircle className="h-5 w-5 text-primary ml-auto" />
+								</div>
 							</div>
 						</div>
 						<DialogFooter>
@@ -184,6 +185,7 @@ export default function ApproveTransfer({
 					</DialogContent>
 				</Dialog>
 			</CardFooter>
+			<Toaster position="top-right" richColors />
 		</Card>
 	);
 }
