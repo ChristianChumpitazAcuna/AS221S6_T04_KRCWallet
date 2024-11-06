@@ -10,7 +10,7 @@ RUN npm install -g npm@10.9.0
 COPY package*.json ./
 
 # Limpia y reinstala dependencias si es necesario
-RUN npm install
+RUN rm -rf node_modules package-lock.json && npm install
 
 COPY . .
 RUN npm run build
