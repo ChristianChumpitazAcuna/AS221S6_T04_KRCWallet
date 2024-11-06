@@ -56,7 +56,7 @@ export default class ContractService {
 
 	async getSymbol(): Promise<string> {
 		try {
-			const symbol = this.publicClient.readContract({
+			const symbol = await this.publicClient.readContract({
 				address: CONTRACT_TOKEN_ADDRESS,
 				abi: tokenABI,
 				functionName: "symbol",
@@ -71,7 +71,7 @@ export default class ContractService {
 
 	async getDecimals(): Promise<number> {
 		try {
-			const decimals = this.publicClient.readContract({
+			const decimals = await this.publicClient.readContract({
 				address: CONTRACT_TOKEN_ADDRESS,
 				abi: tokenABI,
 				functionName: "decimals",
@@ -86,7 +86,7 @@ export default class ContractService {
 
 	async getTotalSupply(): Promise<bigint> {
 		try {
-			const totalSupply = this.publicClient.readContract({
+			const totalSupply = await this.publicClient.readContract({
 				address: CONTRACT_TOKEN_ADDRESS,
 				abi: tokenABI,
 				functionName: "totalSupply",

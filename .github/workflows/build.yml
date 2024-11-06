@@ -52,7 +52,7 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/krc_wallet:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/as221s6_t04_kr_wallet:v1
             ${{ secrets.DOCKERHUB_USERNAME }}/krc_wallet:${{ github.sha }}
           cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/krc_wallet:buildcache
           cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/krc_wallet:buildcache,mode=max
