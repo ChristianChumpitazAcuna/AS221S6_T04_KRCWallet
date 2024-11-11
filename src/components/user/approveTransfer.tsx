@@ -48,6 +48,7 @@ export default function ApproveTransfer({
 				toast.success("Aprobación exitosa");
 				setIsDialogOpen(false);
 				setAmount("");
+				await checkCurrentAllowance();
 			} catch (e) {
 				toast.error("Error al aprobar");
 			} finally {
