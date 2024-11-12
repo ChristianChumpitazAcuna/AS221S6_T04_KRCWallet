@@ -1,5 +1,5 @@
 import { holesky } from "viem/chains";
-import { tokenABI } from "../ABI/tokenABI";
+import { tokenABI } from "@/ABI/tokenABI";
 import {
 	Address,
 	createPublicClient,
